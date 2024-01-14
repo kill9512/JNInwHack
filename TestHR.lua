@@ -70,6 +70,7 @@ Section:NewButton("Copy Positions", "Copy positions to clipboard", function()
     end
 end)
 
+-- เพิ่ม TextBox เพื่อให้ผู้ใช้นำข้อความที่คัดลอกมาแล้วแปะลงในทั้งหมด
 local textBoxValue = ""
 local positionTextBox = Section:NewTextBox("Paste Positions", "Paste positions here", function(value)
     textBoxValue = value
