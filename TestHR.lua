@@ -12,11 +12,13 @@ local function moveToTarget(posIndex)
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
     local humanoid = character:WaitForChild("Humanoid")
+
     if character:FindFirstChild('HumanoidRootPart') then
         local cf = CFrame.new(targetPos)
         local tweeninfo = TweenInfo.new((targetPos - character.HumanoidRootPart.Position).Magnitude / moveSpeed, Enum.EasingStyle.Linear)
         local tween = tween_s:Create(character.HumanoidRootPart, tweeninfo, {CFrame = cf})
         tween:Play()
+
         tween.Completed:Connect(function()
             if posIndex < #targetPositions then
                 wait(1)
@@ -31,6 +33,7 @@ local function moveToTarget(posIndex)
         moveToTarget(posIndex)
     end
 end
+
 
 Section:NewButton("Add Position", "Add", function()
     local player = game.Players.LocalPlayer
@@ -66,16 +69,22 @@ Section:NewButton("Copy Positions", "Copy positions to clipboard", function()
         setclipboard(positionString)
     end
 end)
+-- เพิ่ม TextBox เพื่อให้ผู้ใช้กรอกข้อมูล Vector3
+local textBoxValue = ""
+local positionTextBox = Section:NewTextBox("Enter Vector3", "Vector3.new(x, y, z)", function(value)
+    textBoxValue = value
+end)
 
-Section:NewTextBox("Enter Position", "Enter position as Vector3.new(x, y, z)", function(value)
-    local success, position = pcall(function()
-        return loadstring("return " .. value)()
+Section:NewButton("Add Custom Position", "Add custom position", function()
+    local success, vector3Value = pcall(function()
+        return loadstring("return " .. textBoxValue)()
     end)
 
-    if success and typeof(position) == "Vector3" then
-        table.insert(targetPositions, position)
+    if success and type(vector3Value) == "Vector3" then
+        table.insert(targetPositions, vector3Value)
         moveToTarget(#targetPositions)
     else
-        print("Invalid position format. Please enter a valid Vector3.")
+        warn("Invalid Vector3 input.")
     end
 end)
+
