@@ -57,16 +57,6 @@ Section:NewToggle("Toggle Loop", "loop", function(state)
     isLooping = state
 end)
 
-Section:NewButton("Copy Positions", "Copy positions to clipboard", function()
-    if #targetPositions > 0 then
-        local positionString = ""
-        for _, pos in ipairs(targetPositions) do
-            positionString = positionString .. string.format("Vector3.new(%f, %f, %f),\n", pos.X, pos.Y, pos.Z)
-        end
-        setclipboard(positionString)
-    end
-end)
-
 local positionsTextBox = Section:NewTextBox("Paste Positions", "Paste positions here", function(text)
     local newPositions = {}
     for line in text:gmatch("[^\r\n]+") do
@@ -76,4 +66,14 @@ local positionsTextBox = Section:NewTextBox("Paste Positions", "Paste positions 
         end
     end
     targetPositions = newPositions
+end)
+
+Section:NewButton("Copy Positions", "Copy positions to clipboard", function()
+    if #targetPositions > 0 then
+        local positionString = ""
+        for _, pos in ipairs(targetPositions) do
+            positionString = positionString .. string.format("Vector3.new(%f, %f, %f),\n", pos.X, pos.Y, pos.Z)
+        end
+        setclipboard(positionString)
+    end
 end)
