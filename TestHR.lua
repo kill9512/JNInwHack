@@ -49,15 +49,15 @@ end)
 Section:NewToggle("Toggle Loop", "loop", function(state)
     isLooping = state
 end)
-local Tab2 = Window:NewTab("Copy & Paste")
-local Section = Tab2:NewSection("Copy Positions")
 
-CopySection:NewButton("Copy Positions", "Copy", function()
-    local formattedPositions = ""
-    for i, position in ipairs(targetPositions) do
-        formattedPositions = formattedPositions .. string.format("Vector3.new(%f, %f, %f)\n", position.X, position.Y, position.Z)
+Section:NewButton("Copy Positions", "Copy positions to clipboard", function()
+    if #targetPositions > 0 then
+        local positionString = ""
+        for _, pos in ipairs(targetPositions) do
+            positionString = positionString .. string.format("Vector3.new(%f, %f, %f),\n", pos.X, pos.Y, pos.Z)
+        end
+        setclipboard(positionString)
+    else
+        print("No positions to copy.")
     end
-
-    if formattedPositions ~= "" then
-        setclipboard(formattedPositions)
 end)
