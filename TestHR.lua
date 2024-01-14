@@ -70,22 +70,27 @@ Section:NewButton("Copy Positions", "Copy positions to clipboard", function()
     end
 end)
 
+-- เพิ่ม TextBox เพื่อให้ผู้ใช้นำข้อความที่คัดลอกมาแล้วแปะลงในทั้งหมด
 local textBoxValue = ""
-local positionTextBox = Section:NewTextBox("Enter Vector3", "Paste Vector3 positions here", function(value)
+local positionTextBox = Section:NewTextBox("Paste Positions", "Paste positions here", function(value)
     textBoxValue = value
 end)
 
-Section:NewButton("Add Custom Positions", "Add custom positions", function()
+Section:NewButton("Add Pasted Positions", "Add pasted positions", function()
     local success, positionsString = pcall(function()
         return loadstring("return {" .. textBoxValue .. "}")()
     end)
 
     if success and type(positionsString) == "table" then
-        for _, pos in ipairs(positionsString) do
-            table.insert(targetPositions, pos)
+        for _, vector3Value in ipairs(positionsString) do
+            if type(vector3Value) == "Vector3" then
+                table.insert(targetPositions, vector3Value)
+            else
+                warn("Invalid Vector3 input in the pasted positions.")
+            end
         end
         moveToTarget(#targetPositions)
     else
-        warn("Invalid Vector3 input.")
+        warn("Invalid pasted positions input.")
     end
 end)
