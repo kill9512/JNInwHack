@@ -12,13 +12,11 @@ local function moveToTarget(posIndex)
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
     local humanoid = character:WaitForChild("Humanoid")
-
     if character:FindFirstChild('HumanoidRootPart') then
         local cf = CFrame.new(targetPos)
         local tweeninfo = TweenInfo.new((targetPos - character.HumanoidRootPart.Position).Magnitude / moveSpeed, Enum.EasingStyle.Linear)
         local tween = tween_s:Create(character.HumanoidRootPart, tweeninfo, {CFrame = cf})
         tween:Play()
-
         tween.Completed:Connect(function()
             if posIndex < #targetPositions then
                 wait(1)
@@ -33,7 +31,6 @@ local function moveToTarget(posIndex)
         moveToTarget(posIndex)
     end
 end
-
 
 Section:NewButton("Add Position", "Add", function()
     local player = game.Players.LocalPlayer
