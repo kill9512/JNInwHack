@@ -89,8 +89,5 @@ Section:NewButton("Add Pasted Positions", "Add pasted positions", function()
                 warn("Invalid Vector3 input in the pasted positions.")
             end
         end
-        moveToTarget(#targetPositions)
-    else
-        warn("Invalid pasted positions input.")
     end
 end)
