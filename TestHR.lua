@@ -57,7 +57,6 @@ Section:NewToggle("Toggle Loop", "loop", function(state)
     isLooping = state
 end)
 
--- เพิ่มปุ่ม "Copy Positions"
 Section:NewButton("Copy Positions", "Copy positions to clipboard", function()
     if #targetPositions > 0 then
         local positionString = ""
@@ -68,14 +67,15 @@ Section:NewButton("Copy Positions", "Copy positions to clipboard", function()
     end
 end)
 
--- เพิ่ม TextBox สำหรับให้กรอกข้อมูล
-local newPositionTextBox = Section:NewTextBox("New Position", "Enter new position (Vector3.new)", function(value)
-    -- ตรวจสอบว่าข้อมูลที่กรอกเป็น Vector3.new ไหม
-    local success, newPosition = pcall(function()
+Section:NewTextBox("Enter Position", "Enter position as Vector3.new(x, y, z)", function(value)
+    local success, position = pcall(function()
         return loadstring("return " .. value)()
     end)
 
-    if success and typeof(newPosition) == "Vector3" then
-        table.insert(targetPositions, newPosition)
-
+    if success and typeof(position) == "Vector3" then
+        table.insert(targetPositions, position)
+        moveToTarget(#targetPositions)
+    else
+        print("Invalid position format. Please enter a valid Vector3.")
+    end
 end)
