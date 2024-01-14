@@ -76,7 +76,7 @@ local positionTextBox = Section:NewTextBox("Paste Positions", "Paste positions h
     textBoxValue = value
 end)
 
-Section:NewButton("Add Pasted Positions", "Add pasted positions", function()
+Section:NewButton("Add Muti Pasted Positions", "Add pasted positions", function()
     local success, positionsString = pcall(function()
         return loadstring("return {" .. textBoxValue .. "}")()
     end)
@@ -91,15 +91,19 @@ Section:NewButton("Add Pasted Positions", "Add pasted positions", function()
         end
         moveToTarget(#targetPositions)
     else
-        local success, vector3Value = pcall(function()
-            return loadstring("return " .. textBoxValue)()
-        end)
+        warn("Invalid pasted positions input.")
+    end
+end)
 
-        if success and type(vector3Value) == "Vector3" then
-            table.insert(targetPositions, vector3Value)
-            moveToTarget(#targetPositions)
-        else
-            warn("Invalid input. Please enter a valid Vector3 or a table of Vector3 values.")
-        end
+Section:NewButton("Add One Custom Position", "Add custom position", function()
+    local success, vector3Value = pcall(function()
+        return loadstring("return " .. textBoxValue)()
+    end)
+
+    if success and type(vector3Value) == "Vector3" then
+        table.insert(targetPositions, vector3Value)
+        moveToTarget(#targetPositions)
+    else
+        warn("Invalid Vector3 input.")
     end
 end)
