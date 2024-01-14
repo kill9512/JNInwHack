@@ -67,28 +67,42 @@ Section:NewButton("Copy Positions", "Copy positions to clipboard", function()
     end
 end)
 
--- เพิ่ม TextBox สำหรับให้ผู้เล่นนำข้อความทั้งหมดมาวาง
 local textBoxValue = ""
-local positionTextBox = Section:NewTextBox("Paste Positions", "Paste positions here", function(value)
+local positionTextBox = Section:NewTextBox("Enter Vector3", "Vector3.new(x, y, z)", function(value)
     textBoxValue = value
 end)
 
-Section:NewButton("Add Pasted Positions", "Add pasted positions", function()
-    local success, positionsText = pcall(function()
-        return loadstring("return {" .. textBoxValue .. "}")()
+Section:NewButton("Add Custom Position", "Add custom position", function()
+    local success, vector3Value = pcall(function()
+        return loadstring("return " .. textBoxValue)()
     end)
 
-    if success and type(positionsText) == "table" then
-        for _, pos in ipairs(positionsText) do
-            if type(pos) == "Vector3" then
-                table.insert(targetPositions, pos)
-            else
-                warn("Invalid Vector3 input.")
-                break
-            end
-        end
+    if success and type(vector3Value) == "Vector3" then
+        table.insert(targetPositions, vector3Value)
         moveToTarget(#targetPositions)
     else
-        warn("Invalid positions input.")
+        warn("Invalid Vector3 input.")
     end
+end)
+
+-- เพิ่ม TextBox สำหรับให้ผู้เล่นกรอกข้อมูลตำแหน่งทีละบรรทัด
+local multiPositionTextBox = Section:NewTextBox("Paste Multiple Positions", "Paste positions here", function(value)
+    local positions = {}
+    for line in value:gmatch("[^\r\n]+") do
+        local success, vector3Value = pcall(function()
+            return loadstring("return " .. line)()
+        end)
+
+        if success and type(vector3Value) == "Vector3" then
+            table.insert(positions, vector3Value)
+        else
+            warn("Invalid Vector3 input in line: " .. line)
+        end
+    end
+
+    -- เพิ่มตำแหน่งที่ได้จาก TextBox ลงใน targetPositions
+    for _, pos in ipairs(positions) do
+        table.insert(targetPositions, pos)
+    end
+
 end)
