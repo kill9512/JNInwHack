@@ -49,7 +49,7 @@ end)
 Section:NewToggle("Toggle Loop", "loop", function(state)
     isLooping = state
 end)
-
+local Tab = Window:NewTab("Copy & Paste")
 local Section = Tab:NewSection("Copy Positions")
 
 CopySection:NewButton("Copy Positions", "Copy", function()
