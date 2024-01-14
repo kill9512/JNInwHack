@@ -70,11 +70,22 @@ Section:NewButton("Copy Positions", "Copy positions to clipboard", function()
     end
 end)
 
-Section:NewTextBox("Enter Vector3 List", "Paste your Vector3 list here", function(value)
-    local positionsList = {}
-    for match in value:gmatch("Vector3%.new%((%-?%d+%.?%d*), (%-?%d+%.?%d*), (%-?%d+%.?%d*)%)") do
-        local x, y, z = tonumber(match[1]), tonumber(match[2]), tonumber(match[3])
-        table.insert(positionsList, Vector3.new(x, y, z))
+local textBoxValue = ""
+local positionTextBox = Section:NewTextBox("Enter Vector3", "Paste Vector3 positions here", function(value)
+    textBoxValue = value
+end)
+
+Section:NewButton("Add Custom Positions", "Add custom positions", function()
+    local success, positionsString = pcall(function()
+        return loadstring("return {" .. textBoxValue .. "}")()
+    end)
+
+    if success and type(positionsString) == "table" then
+        for _, pos in ipairs(positionsString) do
+            table.insert(targetPositions, pos)
+        end
+        moveToTarget(#targetPositions)
+    else
+        warn("Invalid Vector3 input.")
     end
-    targetPositions = positionsList
 end)
