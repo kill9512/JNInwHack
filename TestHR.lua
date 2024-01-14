@@ -49,8 +49,8 @@ end)
 Section:NewToggle("Toggle Loop", "loop", function(state)
     isLooping = state
 end)
-local Tab = Window:NewTab("Copy & Paste")
-local Section = Tab:NewSection("Copy Positions")
+local Tab2 = Window:NewTab("Copy & Paste")
+local Section = Tab2:NewSection("Copy Positions")
 
 CopySection:NewButton("Copy Positions", "Copy", function()
     local formattedPositions = ""
@@ -60,8 +60,4 @@ CopySection:NewButton("Copy Positions", "Copy", function()
 
     if formattedPositions ~= "" then
         setclipboard(formattedPositions)
-        print("Positions copied to clipboard.")
-    else
-        print("No positions to copy.")
-    end
 end)
