@@ -50,35 +50,18 @@ Section:NewToggle("Toggle Loop", "loop", function(state)
     isLooping = state
 end)
 
--- สร้างเมนู Load
-local loadMenu = Section:NewDropdown("Load Positions", "Load saved positions", {})
-loadMenu:AddButton("None", function() end)  -- เพิ่มตัวเลือก None เพื่อไม่โหลดตำแหน่งใด ๆ
+local Section = Tab:NewSection("Copy Positions")
 
-loadMenu.OnDropdownOpened:Connect(function()
-    loadMenu:Clear()  -- เคลียร์ตัวเลือกทั้งหมดทุกรอบที่เปิด
-    loadMenu:AddButton("None", function() end)  -- เพิ่มตัวเลือก None เพื่อไม่โหลดตำแหน่งใด ๆ
-    local files = game:HttpGet("https://api.myjson.com/bins")  -- ดึงข้อมูล JSON จาก API ที่เก็บไฟล์ทั้งหมด
-    files = game.HttpService:JSONDecode(files)
-    for _, file in ipairs(files) do
-        loadMenu:AddButton(file.name, function()
-            local data = game:HttpGet("https://api.myjson.com/bins/" .. file.name)
-            targetPositions = game.HttpService:JSONDecode(data)
-            print("Loaded positions:", file.name)
-        end)
+CopySection:NewButton("Copy Positions", "Copy", function()
+    local formattedPositions = ""
+    for i, position in ipairs(targetPositions) do
+        formattedPositions = formattedPositions .. string.format("Vector3.new(%f, %f, %f)\n", position.X, position.Y, position.Z)
     end
-end)
 
--- สร้างเมนู Save
-local saveMenu = Section:NewDropdown("Save Positions", "Save current positions", {})
-saveMenu:AddButton("None", function() end)  -- เพิ่มตัวเลือก None เพื่อไม่บันทึกตำแหน่งใด ๆ
-
-saveMenu.OnDropdownOpened:Connect(function()
-    saveMenu:Clear()  -- เคลียร์ตัวเลือกทั้งหมดทุกรอบที่เปิด
-    saveMenu:AddButton("None", function() end)  -- เพิ่มตัวเลือก None เพื่อไม่บันทึกตำแหน่งใด ๆ
-    local fileName = os.time()  -- ใช้ timestamp เป็นชื่อไฟล์
-    saveMenu:AddButton("Save as " .. fileName, function()
-        local jsonData = game.HttpService:JSONEncode(targetPositions)
-        game:HttpPost("https://api.myjson.com/bins", Enum.HttpContentType.ApplicationJson, jsonData)
-        print("Saved positions as:", fileName)
-    end)
+    if formattedPositions ~= "" then
+        setclipboard(formattedPositions)
+        print("Positions copied to clipboard.")
+    else
+        print("No positions to copy.")
+    end
 end)
