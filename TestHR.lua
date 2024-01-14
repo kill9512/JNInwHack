@@ -81,7 +81,13 @@ Section:NewButton("Add Pasted Positions", "Add pasted positions", function()
     end)
 
     if success and type(positionsString) == "table" then
-        targetPositions = positionsString
+        for _, vector3Value in ipairs(positionsString) do
+            if type(vector3Value) == "Vector3" then
+                table.insert(targetPositions, vector3Value)
+            else
+                warn("Invalid Vector3 input in the pasted positions.")
+            end
+        end
         moveToTarget(#targetPositions)
     else
         warn("Invalid pasted positions input.")
