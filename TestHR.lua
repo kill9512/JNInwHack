@@ -66,36 +66,3 @@ Section:NewButton("Copy Positions", "Copy positions to clipboard", function()
         setclipboard(positionString)
     end
 end)
-
--- เพิ่ม TextBox ที่รองรับหลายบรรทัด
-local textBoxValue = ""
-local positionTextBox = Section:NewTextBox("Enter Vector3s (one per line)", "", function(value)
-    textBoxValue = value
-end, true)
-
-Section:NewButton("Add Custom Positions", "Add custom positions", function()
-    local success, lines = pcall(function()
-        return string.split(textBoxValue, "\n")
-    end)
-
-    if success then
-        for _, line in ipairs(lines) do
-            local trimmedLine = line:match("^%s*(.-)%s*$")  -- ลบช่องว่างที่ไม่จำเป็นที่อยู่ที่เริ่มและสิ้นสุดข้อความ
-            if trimmedLine ~= "" then
-                local success, vector3Value = pcall(function()
-                    return loadstring("return " .. trimmedLine)()
-                end)
-
-                if success and type(vector3Value) == "Vector3" then
-                    table.insert(targetPositions, vector3Value)
-                else
-                    warn("Invalid Vector3 input:", trimmedLine)
-                end
-            end
-        end
-
-        moveToTarget(#targetPositions)
-    else
-        warn("Failed to parse input lines.")
-    end
-end)
