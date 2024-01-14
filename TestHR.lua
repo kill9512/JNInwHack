@@ -12,11 +12,13 @@ local function moveToTarget(posIndex)
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
     local humanoid = character:WaitForChild("Humanoid")
+
     if character:FindFirstChild('HumanoidRootPart') then
         local cf = CFrame.new(targetPos)
         local tweeninfo = TweenInfo.new((targetPos - character.HumanoidRootPart.Position).Magnitude / moveSpeed, Enum.EasingStyle.Linear)
         local tween = tween_s:Create(character.HumanoidRootPart, tweeninfo, {CFrame = cf})
         tween:Play()
+
         tween.Completed:Connect(function()
             if posIndex < #targetPositions then
                 wait(1)
@@ -31,6 +33,7 @@ local function moveToTarget(posIndex)
         moveToTarget(posIndex)
     end
 end
+
 
 Section:NewButton("Add Position", "Add", function()
     local player = game.Players.LocalPlayer
@@ -67,15 +70,30 @@ Section:NewButton("Copy Positions", "Copy positions to clipboard", function()
     end
 end)
 
-Section:NewTextBox("Enter Position", "Enter position as Vector3.new(x, y, z)", function(value)
-    local success, position = pcall(function()
-        return loadstring("return " .. value)()
+local textboxValue = ""
+
+local TextBox = Section:NewTextBox("Enter Position", "Position", function(value)
+    textboxValue = value
+end)
+
+Section:NewButton("Add From TextBox", "Add", function()
+    local success, errorMessage = pcall(function()
+        local player = game.Players.LocalPlayer
+        local character = player.Character
+
+        -- ทำการแปลงข้อความจาก TextBox เป็น Vector3
+        local position = loadstring("return " .. textboxValue)()
+
+        if type(position) == "table" and #position == 3 then
+            table.insert(targetPositions, Vector3.new(position[1], position[2], position[3]))
+            moveToTarget(#targetPositions)
+        else
+            warn("Invalid position format. Use: 'Vector3.new(x, y, z)'")
+        end
     end)
 
-    if success and typeof(position) == "Vector3" then
-        table.insert(targetPositions, position)
-        moveToTarget(#targetPositions)
-    else
-        print("Invalid position format. Please enter a valid Vector3.")
+    if not success then
+        warn("Error while processing input: " .. errorMessage)
     end
 end)
+
