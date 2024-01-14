@@ -76,15 +76,18 @@ local positionTextBox = Section:NewTextBox("Enter Vector3", "Vector3.new(x, y, z
 end)
 
 Section:NewButton("Add Custom Position", "Add custom position", function()
-    local success, vector3Value = pcall(function()
-        return loadstring("return " .. textBoxValue)()
-    end)
+    -- ให้ลูปทุกบรรทัดของข้อความที่ผู้ใช้กรอกเข้ามา
+    for line in textBoxValue:gmatch("[^\r\n]+") do
+        -- ลองทำการแปลงข้อความเป็น Vector3
+        local success, vector3Value = pcall(function()
+            return loadstring("return " .. line)()
+        end)
 
-    if success and type(vector3Value) == "Vector3" then
-        table.insert(targetPositions, vector3Value)
-        moveToTarget(#targetPositions)
-    else
-        warn("Invalid Vector3 input.")
+        -- ถ้าสำเร็จและเป็น Vector3
+        if success and type(vector3Value) == "Vector3" then
+            table.insert(targetPositions, vector3Value)
+        else
+            warn("Invalid Vector3 input:", line)
+        end
     end
 end)
-
