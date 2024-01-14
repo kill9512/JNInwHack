@@ -3,7 +3,7 @@ local Window = Library.CreateLib("KONG GUISUS", "DarkTheme")
 local Tab = Window:NewTab("Main")
 local Section = Tab:NewSection("Teleport")
 
-local targetPositions, moveSpeed, isLooping = {}, 1, false
+local targetPositions, moveSpeed, isLooping = {}, 50, false
 local tween_s = game:GetService('TweenService')
 local lp = game.Players.LocalPlayer
 
