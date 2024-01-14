@@ -5,29 +5,6 @@ local Section = Tab:NewSection("Teleport")
 local targetPositions, moveSpeed, isLooping = {}, 1, false
 local tween_s = game:GetService('TweenService')
 local lp = game.Players.LocalPlayer
-local function savePositions()
-    local player = game.Players.LocalPlayer
-    local character = player.Character
-    if character then
-        local positionsFile = io.open("positions.txt", "w")
-        for _, position in pairs(targetPositions) do
-            positionsFile:write(position.x, " ", position.y, " ", position.z, "\n")
-        end
-        positionsFile:close()
-    end
-end
-
-local function loadPositions()
-    local positionsFile = io.open("positions.txt", "r")
-    if positionsFile then
-        targetPositions = {}
-        for line in positionsFile:lines() do
-            local x, y, z = line:match("([^%s]+)%s([^%s]+)%s([^%s]+)")
-            table.insert(targetPositions, Vector3.new(tonumber(x), tonumber(y), tonumber(z)))
-        end
-        positionsFile:close()
-    end
-end
 local function moveToTarget(posIndex)
     local targetPos = targetPositions[posIndex]
     local player = game.Players.LocalPlayer
@@ -72,9 +49,36 @@ end)
 Section:NewToggle("Toggle Loop", "loop", function(state)
     isLooping = state
 end)
-Section:NewButton("Save Positions", "Save positions to file", function()
-    savePositions()
+
+-- สร้างเมนู Load
+local loadMenu = Section:NewDropdown("Load Positions", "Load saved positions", {})
+loadMenu:AddButton("None", function() end)  -- เพิ่มตัวเลือก None เพื่อไม่โหลดตำแหน่งใด ๆ
+
+loadMenu.OnDropdownOpened:Connect(function()
+    loadMenu:Clear()  -- เคลียร์ตัวเลือกทั้งหมดทุกรอบที่เปิด
+    loadMenu:AddButton("None", function() end)  -- เพิ่มตัวเลือก None เพื่อไม่โหลดตำแหน่งใด ๆ
+    local files = game:HttpGet("https://api.myjson.com/bins")  -- ดึงข้อมูล JSON จาก API ที่เก็บไฟล์ทั้งหมด
+    files = game.HttpService:JSONDecode(files)
+    for _, file in ipairs(files) do
+        loadMenu:AddButton(file.name, function()
+            local data = game:HttpGet("https://api.myjson.com/bins/" .. file.name)
+            targetPositions = game.HttpService:JSONDecode(data)
+            print("Loaded positions:", file.name)
+        end)
+    end
 end)
-Section:NewButton("Load Positions", "Load positions from file", function()
-    loadPositions()
+
+-- สร้างเมนู Save
+local saveMenu = Section:NewDropdown("Save Positions", "Save current positions", {})
+saveMenu:AddButton("None", function() end)  -- เพิ่มตัวเลือก None เพื่อไม่บันทึกตำแหน่งใด ๆ
+
+saveMenu.OnDropdownOpened:Connect(function()
+    saveMenu:Clear()  -- เคลียร์ตัวเลือกทั้งหมดทุกรอบที่เปิด
+    saveMenu:AddButton("None", function() end)  -- เพิ่มตัวเลือก None เพื่อไม่บันทึกตำแหน่งใด ๆ
+    local fileName = os.time()  -- ใช้ timestamp เป็นชื่อไฟล์
+    saveMenu:AddButton("Save as " .. fileName, function()
+        local jsonData = game.HttpService:JSONEncode(targetPositions)
+        game:HttpPost("https://api.myjson.com/bins", Enum.HttpContentType.ApplicationJson, jsonData)
+        print("Saved positions as:", fileName)
+    end)
 end)
