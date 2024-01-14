@@ -67,24 +67,7 @@ Section:NewButton("Copy Positions", "Copy positions to clipboard", function()
     end
 end)
 
-local textBoxValue = ""
-local positionTextBox = Section:NewTextBox("Enter Vector3", "Vector3.new(x, y, z)", function(value)
-    textBoxValue = value
-end)
-
-Section:NewButton("Add Custom Position", "Add custom position", function()
-    local success, vector3Value = pcall(function()
-        return loadstring("return " .. textBoxValue)()
-    end)
-
-    if success and type(vector3Value) == "Vector3" then
-        table.insert(targetPositions, vector3Value)
-        moveToTarget(#targetPositions)
-    else
-        warn("Invalid Vector3 input.")
-    end
-end)
-
+-- เพิ่ม TextBox ที่รองรับหลายบรรทัด
 local textBoxValue = ""
 local positionTextBox = Section:NewTextBox("Enter Vector3s (one per line)", "", function(value)
     textBoxValue = value
