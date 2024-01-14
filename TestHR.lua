@@ -69,25 +69,12 @@ Section:NewButton("Copy Positions", "Copy positions to clipboard", function()
         setclipboard(positionString)
     end
 end)
--- เพิ่ม TextBox เพื่อให้ผู้ใช้กรอกข้อมูล Vector3
-local textBoxValue = ""
-local positionTextBox = Section:NewTextBox("Enter Vector3", "Vector3.new(x, y, z)", function(value)
-    textBoxValue = value
-end)
 
-Section:NewButton("Add Custom Position", "Add custom position", function()
-    -- ให้ลูปทุกบรรทัดของข้อความที่ผู้ใช้กรอกเข้ามา
-    for line in textBoxValue:gmatch("[^\r\n]+") do
-        -- ลองทำการแปลงข้อความเป็น Vector3
-        local success, vector3Value = pcall(function()
-            return loadstring("return " .. line)()
-        end)
-
-        -- ถ้าสำเร็จและเป็น Vector3
-        if success and type(vector3Value) == "Vector3" then
-            table.insert(targetPositions, vector3Value)
-        else
-            warn("Invalid Vector3 input:", line)
-        end
+Section:NewTextBox("Enter Vector3 List", "Paste your Vector3 list here", function(value)
+    local positionsList = {}
+    for match in value:gmatch("Vector3%.new%((%-?%d+%.?%d*), (%-?%d+%.?%d*), (%-?%d+%.?%d*)%)") do
+        local x, y, z = tonumber(match[1]), tonumber(match[2]), tonumber(match[3])
+        table.insert(positionsList, Vector3.new(x, y, z))
     end
+    targetPositions = positionsList
 end)
