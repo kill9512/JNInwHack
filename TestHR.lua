@@ -2,9 +2,11 @@ local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHept
 local Window = Library.CreateLib("KONG GUISUS", "DarkTheme")
 local Tab = Window:NewTab("Main")
 local Section = Tab:NewSection("Teleport")
+
 local targetPositions, moveSpeed, isLooping = {}, 1, false
 local tween_s = game:GetService('TweenService')
 local lp = game.Players.LocalPlayer
+
 local function moveToTarget(posIndex)
     local targetPos = targetPositions[posIndex]
     local player = game.Players.LocalPlayer
@@ -29,6 +31,7 @@ local function moveToTarget(posIndex)
         moveToTarget(posIndex)
     end
 end
+
 Section:NewButton("Add Position", "Add", function()
     local player = game.Players.LocalPlayer
     local character = player.Character
@@ -37,19 +40,24 @@ Section:NewButton("Add Position", "Add", function()
         moveToTarget(#targetPositions)
     end
 end)
+
 Section:NewButton("Reset Positions", "Reset", function()
     targetPositions = {}
 end)
+
 Section:NewSlider("Move Speed", "speed", 1, 100, function(value)
     moveSpeed = value
 end)
+
 Section:NewButton("One Round", "Just 1", function()
     moveToTarget(1)
 end)
+
 Section:NewToggle("Toggle Loop", "loop", function(state)
     isLooping = state
 end)
 
+-- เพิ่มปุ่ม "Copy Positions"
 Section:NewButton("Copy Positions", "Copy positions to clipboard", function()
     if #targetPositions > 0 then
         local positionString = ""
