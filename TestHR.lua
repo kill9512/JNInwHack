@@ -67,7 +67,7 @@ Section:NewButton("Copy Positions", "Copy positions to clipboard", function()
     end
 end)
 
-local positionsTextBox = Section:NewTextBox("Paste Positions", "Paste positions here", function(text)
+local positionsTextBox = Section:NewTextBox("Paste Positions", "Paste positions here\nExample: "Vector3.new(x, y, z)\nVector3.new(x2, y2, z2)"", function(text)
     local newPositions = {}
     for line in text:gmatch("[^\r\n]+") do
         local x, y, z = line:match("Vector3.new%((.-), (.-), (.-)%)")
