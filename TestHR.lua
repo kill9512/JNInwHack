@@ -57,17 +57,6 @@ Section:NewToggle("Toggle Loop", "loop", function(state)
     isLooping = state
 end)
 
-local positionsTextBox = Section:NewTextBox("Paste Positions", "Paste positions here", function(text)
-    local newPositions = {}
-    for line in text:gmatch("[^\r\n]+") do
-        local x, y, z = line:match("Vector3.new%((.-), (.-), (.-)%)")
-        if x and y and z then
-            table.insert(newPositions, Vector3.new(tonumber(x), tonumber(y), tonumber(z)))
-        end
-    end
-    targetPositions = newPositions
-end)
-
 Section:NewButton("Copy Positions", "Copy positions to clipboard", function()
     if #targetPositions > 0 then
         local positionString = ""
