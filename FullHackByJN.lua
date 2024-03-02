@@ -45,7 +45,7 @@ Section:NewButton("Reset Positions", "Reset", function()
     targetPositions = {}
 end)
 
-Section:NewSlider("Move Speed", "speed", 1, 100, function(value)
+Section:NewSlider("Move Speed", "speed", 1, 1000, function(value)
     moveSpeed = value
 end)
 
